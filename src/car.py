@@ -16,24 +16,24 @@ class Car:
         self.deceleration_speed = -2000
 
         self.rotation = rotation
-        self.rotation_speed = 3
+        self.rotation_speed = 5
 
         self.image = pg.Surface((100, 50), pg.SRCALPHA)
         pg.draw.rect(self.image, (255, 255, 255), (0, 0, 100, 50), 2)
 
         self.speed_limit = 500
 
-    def draw(self, surf: pg.Surface):
+    def draw(self, surf: pg.Surface, camera: pg.Vector2):
         image = pg.transform.rotate(self.image, degrees(self.rotation))
-        image_rect = image.get_rect(center=self.pos)
+        image_rect = image.get_rect(center=self.pos-camera)
         surf.blit(image, image_rect)
 
         for dest in self.destinations:
-            pg.draw.circle(surf, (255, 255, 0), dest, 5)
+            pg.draw.circle(surf, (255, 255, 0), dest - camera, 5)
         
         for r in [0, -pi/8, -pi/4]:
-            for i in range(1, 20):
-                p = self.pos + pg.Vector2(cos(self.rotation + r), -sin(self.rotation + r)) * 10 * i
+            for i in range(5, 15):
+                p = self.pos + pg.Vector2(cos(self.rotation + r), -sin(self.rotation + r)) * 10 * i - camera
                 pg.draw.circle(surf, (255, 0, 0), p, 5)
 
     def update(self, dt: float, signal: str, other_cars: list[Car]):
@@ -52,7 +52,7 @@ class Car:
         for car in other_cars:
             if car is not self:  
                 for r in [0, -pi/8, -pi/4]:
-                    for i in range(1, 20):
+                    for i in range(5, 15):
                         p = self.pos + pg.Vector2(cos(self.rotation + r), -sin(self.rotation + r)) * 10 * i
                         if dist(p, car.pos) < 50:
                             max_speed = 0
