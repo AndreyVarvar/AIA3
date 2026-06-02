@@ -21,7 +21,7 @@ class Car:
         self.image = pg.Surface((100, 50), pg.SRCALPHA)
         pg.draw.rect(self.image, (255, 255, 255), (0, 0, 100, 50), 2)
 
-        self.speed_limit = 500
+        self.speed_limit = 300
 
     def draw(self, surf: pg.Surface, camera: pg.Vector2):
         image = pg.transform.rotate(self.image, degrees(self.rotation))
