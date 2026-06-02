@@ -64,8 +64,8 @@ class Car:
 
         destination = self.destinations[0]
         
-        if len(self.destinations) == 1:  # final destination
-            max_speed = min(dist(self.pos, destination)+100, max_speed)
+        # if len(self.destinations) == 1:  # final destination
+        #     max_speed = min(dist(self.pos, destination)+100, max_speed)
         # check if we reached the speed limit
         if self.speed > max_speed:
             self.acceleration = self.deceleration_speed

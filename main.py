@@ -9,7 +9,7 @@ from src.intersection import Intersection
 pg.init()
 
 
-window = pg.Window("visualiser", size=(1000, 800))
+window = pg.Window("visualiser", size=(800, 800))
 display = window.get_surface()
 font = pg.sysfont.SysFont("arial", size=20)
 text_green = font.render("GREEN", True, (0, 255, 0))
@@ -32,6 +32,9 @@ while running:
     keys_just_pressed = pg.key.get_just_pressed()
 
     intersection.update(dt)
+
+    if keys_just_pressed[pg.K_m]:
+        print(pg.mouse.get_pos())
 
     display.fill((0, 0, 0))
 
