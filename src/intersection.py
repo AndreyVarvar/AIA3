@@ -7,7 +7,7 @@ from math import *
 
 
 class Intersection:
-    def __init__(self, cars_per_sec: float):
+    def __init__(self, cars_per_sec: float, directional_chances: list = None):
         self.cars: list[Car] = []
 
         self.traffic_lights: list[TrafficLight] = self.init_traffic_lights()
@@ -17,6 +17,11 @@ class Intersection:
         self.data = self.init_data()
 
         self.runtime = 0
+
+        if directional_chances is None:
+            self.directional_chances = [0.25, 0.25, 0.25, 0.25]  # West East, South, North
+        else:
+            self.directional_chances = directional_chances
 
     def init_data(self):
         return {
@@ -56,7 +61,11 @@ class Intersection:
         car_id = 0
         if self.poisson(dt):
             spawn_car = True
-            car_id = random.randrange(4)
+            r = random.random()
+            for i in range(len(self.directional_chances)):
+                if sum(self.directional_chances[:i]) >= r:
+                    car_id = i
+                    break
 
         for i in range(len(self.cars))[::-1]:
             car = self.cars[i]

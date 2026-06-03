@@ -18,7 +18,7 @@ text_red = font.render("RED (press 'R' to change)", True, (255, 0, 0))
 
 camera = pg.Vector2(0, -100)
 
-intersection = Intersection(1)
+intersection = Intersection(1, directional_chances=[0.30, 0.10, 0.10, 0.50])
 
 clock = pg.time.Clock()
 running = True
