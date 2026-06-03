@@ -44,7 +44,7 @@ class Car:
             max_speed = 0
 
 
-        self.rotation %= 2*pi
+        self.rotation %= (2*pi)
         if self.rotation < 0:
             self.rotaion += 2*pi
 

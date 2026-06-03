@@ -9,7 +9,7 @@ from src.intersection import Intersection
 pg.init()
 
 
-window = pg.Window("visualiser", size=(800, 800))
+window = pg.Window("visualiser", size=(900, 900))
 display = window.get_surface()
 font = pg.sysfont.SysFont("arial", size=20)
 text_green = font.render("GREEN", True, (0, 255, 0))
