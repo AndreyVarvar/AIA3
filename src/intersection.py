@@ -10,31 +10,51 @@ class Intersection:
     def __init__(self, cars_per_sec: float):
         self.cars: list[Car] = []
 
-        horiz = 10
-        vert = 20
-        grace = 1
+        self.traffic_lights: list[TrafficLight] = self.init_traffic_lights()
 
-        self.traffic_lights: list[TrafficLight] = [
-            TrafficLight(pg.Rect(50, 350, 100, 100), initial_light="green", red_time=horiz+grace, green_time=vert),
-            TrafficLight(pg.Rect(850, 50, 100, 100), initial_light="green", red_time=horiz+grace, green_time=vert),
-            TrafficLight(pg.Rect(600, 650, 100, 100), initial_light="red", red_time=vert+grace, green_time=horiz),
-            TrafficLight(pg.Rect(300, -150, 100, 100), initial_light="red", red_time=vert+grace, green_time=horiz),
-        ]
-
-# (658, 720)
-# (349, 69)
-# (925, 209)
-# (111, 513)
         self.cps = cars_per_sec
 
-        self.time_since_last_spawn = 0
+        self.data = self.init_data()
+
+        self.runtime = 0
+
+    def init_data(self):
+        return {
+            "average waiting time": 0.0,
+            "longest wait": 0.0,
+            "cars seen": 0,
+        }
+
+    def poisson(self, dt):
+        return random.random() < (1 - exp(-self.cps * dt))
+
+    def init_traffic_lights(self, horizontal: int = 10, vertical: int = 20):
+        horiz = horizontal
+        vert = vertical
+        grace = 3
+        
+        return [
+            TrafficLight(pg.Rect(50, 350, 100, 100), initial_light="green", red_time=horiz+grace, green_time=vert),
+            TrafficLight(pg.Rect(850, 50, 100, 100), initial_light="green", red_time=horiz+grace, green_time=vert),
+            TrafficLight(pg.Rect(600, 650, 100, 100), initial_light="red", red_time=vert+grace, green_time=horiz, start_time=grace/2),
+            TrafficLight(pg.Rect(300, -150, 100, 100), initial_light="red", red_time=vert+grace, green_time=horiz, start_time=grace/2),
+        ]
+
+    def update_traffic_light_timing(self, horizontal: int = 10, vertical: int = 20):
+        data = self.data.copy()
+        self.traffic_lights = self.init_traffic_lights(horizontal, vertical)
+        self.data = self.init_data()
+
+        self.runtime = 0.0
+
+        return data  # return a copy of data
 
     def update(self, dt: float):
+        self.runtime += dt
+
         spawn_car = False
         car_id = 0
-        self.time_since_last_spawn += dt
-        if self.time_since_last_spawn >= 1/self.cps:
-            self.time_since_last_spawn -= 1/self.cps
+        if self.poisson(dt):
             spawn_car = True
             car_id = random.randrange(4)
 
@@ -49,6 +69,10 @@ class Intersection:
             car.update(dt, color, self.cars)
 
             if car.reached_destination:
+                self.data["average waiting time"] = (self.data["average waiting time"] * self.data["cars seen"] + car.wait_time) / (self.data["cars seen"] + 1)
+                self.data["cars seen"] += 1
+                if car.wait_time >= self.data["longest wait"]:
+                    self.data["longest wait"] = car.wait_time
                 self.cars.pop(i)
 
         for traffic_light in self.traffic_lights:

@@ -3,15 +3,15 @@ import pygame as pg
 
 
 class TrafficLight:
-    def __init__(self, area: pg.Rect, initial_light: str, red_time: float, green_time: float) -> None:
+    def __init__(self, area: pg.Rect, initial_light: str, red_time: float, green_time: float, start_time: float = 0.0) -> None:
         self.current_light = initial_light
         self.area = area
         self.red_time = red_time
         self.green_time = green_time
 
-        self.time_since_change = 0.0
+        self.time_since_change = start_time
 
-        self.font = font = pg.font.SysFont("arial", 40)
+        self.font = pg.font.SysFont("arial", 40)
     
     def update(self, dt):
         self.time_since_change += dt

@@ -21,7 +21,9 @@ class Car:
         self.image = pg.Surface((100, 50), pg.SRCALPHA)
         pg.draw.rect(self.image, (255, 255, 255), (0, 0, 100, 50), 2)
 
-        self.speed_limit = 300
+        self.speed_limit = 500
+
+        self.wait_time = 0.0
 
     def draw(self, surf: pg.Surface, camera: pg.Vector2):
         image = pg.transform.rotate(self.image, degrees(self.rotation))
@@ -37,6 +39,8 @@ class Car:
                 pg.draw.circle(surf, (255, 0, 0), p, 5)
 
     def update(self, dt: float, signal: str, other_cars: list[Car]):
+        self.wait_time += dt
+
         # check if we can move
         if signal == "green":
             max_speed = self.speed_limit
@@ -95,7 +99,7 @@ class Car:
         self.speed += self.acceleration * dt
         self.pos += pg.Vector2(cos(self.rotation), -sin(self.rotation)) * self.speed * dt
 
-        if dist(self.pos, destination) < 10:
+        if dist(self.pos, destination) < 20:
             self.destinations.remove(destination)
 
         if len(self.destinations) == 0:
