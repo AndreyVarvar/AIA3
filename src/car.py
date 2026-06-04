@@ -39,7 +39,8 @@ class Car:
                 pg.draw.circle(surf, (255, 0, 0), p, 5)
 
     def update(self, dt: float, signal: str, other_cars: list[Car]):
-        self.wait_time += dt
+        if self.speed < 10:
+            self.wait_time += dt
 
         # check if we can move
         if signal == "green":

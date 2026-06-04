@@ -6,6 +6,8 @@ from __future__ import annotations
 import pygame as pg
 from src.intersection import Intersection
 
+from algorithms.websters_method import WebstersMethod
+
 pg.init()
 
 
@@ -18,7 +20,9 @@ text_red = font.render("RED (press 'R' to change)", True, (255, 0, 0))
 
 camera = pg.Vector2(0, -100)
 
-intersection = Intersection(1, directional_chances=[0.30, 0.10, 0.10, 0.50])
+intersection = Intersection(1, directional_chances=[0.40, 0.40, 0.10, 0.10])
+
+algorithm = WebstersMethod(intersection)
 
 clock = pg.time.Clock()
 running = True
@@ -26,6 +30,8 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
+
+    algorithm.update()
 
     dt = clock.tick(60) / 1_000
     keys_pressed = pg.key.get_pressed()

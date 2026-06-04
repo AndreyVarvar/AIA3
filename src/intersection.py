@@ -10,7 +10,9 @@ class Intersection:
     def __init__(self, cars_per_sec: float, directional_chances: list = None):
         self.cars: list[Car] = []
 
-        self.traffic_lights: list[TrafficLight] = self.init_traffic_lights()
+        self.change_interval = 3
+        
+        self.init_traffic_lights()
 
         self.cps = cars_per_sec
 
@@ -18,11 +20,11 @@ class Intersection:
 
         self.runtime = 0
 
+
         if directional_chances is None:
-            self.directional_chances = [0.25, 0.25, 0.25, 0.25]  # West East, South, North
+            self.directional_chances = [0.25, 0.25, 0.25, 0.25]  # East, South, North, West
         else:
             self.directional_chances = directional_chances
-
     def init_data(self):
         return {
             "average waiting time": 0.0,
@@ -33,21 +35,23 @@ class Intersection:
     def poisson(self, dt):
         return random.random() < (1 - exp(-self.cps * dt))
 
-    def init_traffic_lights(self, horizontal: int = 10, vertical: int = 20):
+    def init_traffic_lights(self, horizontal: float = 10, vertical: float = 20):
         horiz = horizontal
         vert = vertical
-        grace = 3
         
-        return [
-            TrafficLight(pg.Rect(50, 350, 100, 100), initial_light="green", red_time=horiz+grace, green_time=vert),
-            TrafficLight(pg.Rect(850, 50, 100, 100), initial_light="green", red_time=horiz+grace, green_time=vert),
-            TrafficLight(pg.Rect(600, 650, 100, 100), initial_light="red", red_time=vert+grace, green_time=horiz, start_time=grace/2),
-            TrafficLight(pg.Rect(300, -150, 100, 100), initial_light="red", red_time=vert+grace, green_time=horiz, start_time=grace/2),
+        self.horizontal = horiz  # times of green-red lights
+        self.vertical = vert
+        
+        self.traffic_lights = [
+            TrafficLight(pg.Rect(50, 350, 100, 100), initial_light="green", red_time=horiz+self.change_interval, green_time=vert),
+            TrafficLight(pg.Rect(850, 50, 100, 100), initial_light="green", red_time=horiz+self.change_interval, green_time=vert),
+            TrafficLight(pg.Rect(600, 650, 100, 100), initial_light="red", red_time=vert+self.change_interval, green_time=horiz, start_time=self.change_interval/2),
+            TrafficLight(pg.Rect(300, -150, 100, 100), initial_light="red", red_time=vert+self.change_interval, green_time=horiz, start_time=self.change_interval/2),
         ]
 
-    def update_traffic_light_timing(self, horizontal: int = 10, vertical: int = 20):
+    def update_traffic_light_timing(self, horizontal: float = 10, vertical: float = 20):
         data = self.data.copy()
-        self.traffic_lights = self.init_traffic_lights(horizontal, vertical)
+        self.init_traffic_lights(horizontal, vertical)
         self.data = self.init_data()
 
         self.runtime = 0.0
